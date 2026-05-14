@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+"""Autonomous loop with plugin system and skill injection."""
+import sys
+import time
+import argparse
+import logging
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from oframe.core import ask_ollama, profit_score
+from oframe.plugin_manager import PluginManager
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("o-loop")
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-n", "--iterations", type=int, default=5, help="Number of iterations")
+    parser.add_argument("--continuous", action="store_true", help="Run forever")
+    args = parser.parse_args()
+
+    # Load plugins
+    plugin_dirs = [Path.home() / ".oframe" / "plugins", Path("oframe/plugins")]
+    pm = PluginManager(plugin_dirs)
+    pm.discover_and_load()
+    logger.info(f"Loaded {len(pm.plugins)} plugins")
+
+    question = "What's the fastest way to make \$100 today using only local tools?"
+    iteration = 0
+    try:
+        while args.continuous or iteration < args.iterations:
+            iteration += 1
+            logger.info(f"Iteration {iteration}")
+
+            # Skill injection (shortcut LLM if plugin has answer)
+            skill_answer = pm.get_matched_answer(question)
+            if skill_answer:
+                answer = skill_answer
+                logger.info("⚡ Used skill shortcut")
+            else:
+                answer = ask_ollama(question)
+            score = profit_score(answer)
+            next_q = ask_ollama(f"Based on '{answer}', what should I ask next?")
+            logger.info(f"Score: {score}")
+
+            # Forward to plugins
+            pm.on_iteration_all(iteration, question, answer, score, next_q)
+
+            # If golden idea (score >= 70), trigger golden idea hook
+            if score >= 70:
+                idea = {"question": question, "answer": answer, "score": score, "next_question": next_q}
+                pm.on_golden_idea_all(idea)
+
+            question = next_q
+            if not args.continuous:
+                time.sleep(2)
+    except KeyboardInterrupt:
+        logger.info("Shutting down")
+    finally:
+        pm.on_shutdown_all()
+
+if __name__ == "__main__":
+    main()
