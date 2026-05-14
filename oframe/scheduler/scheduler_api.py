@@ -36,6 +36,22 @@ def create_scheduler_api(scheduler):
         winner = scheduler.allocator.allocate(skill_name, requested_slots)
         return jsonify({"winner": winner})
 
+    @app.route('/event', methods=['POST'])
+    def trigger_event():
+        data = request.json
+        if not data or "event" not in data:
+            return jsonify({"error": "Missing event name"}), 400
+
+        event_name = data["event"]
+        payload = data.get("data", {})
+
+        # Trigger the event asynchronously so we don't block the API response
+        import threading
+        t = threading.Thread(target=scheduler.trigger_event, args=(event_name, payload), daemon=True)
+        t.start()
+
+        return jsonify({"status": "Event triggered", "event": event_name})
+
     return app
 
 if __name__ == "__main__":
@@ -49,4 +65,4 @@ if __name__ == "__main__":
     scheduler = AdaptiveScheduler(sg, MockPM())
     app = create_scheduler_api(scheduler)
     if app:
-        app.run(port=5005)
+        app.run(port=5014)

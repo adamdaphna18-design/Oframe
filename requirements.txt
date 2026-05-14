@@ -1,3 +1,4 @@
 croniter
 pyyaml
 flask
+requests
