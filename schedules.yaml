@@ -1,0 +1,24 @@
+skills:
+  spectrum_scan:
+    handler: "scheduler_bridge:spectrum_scan"
+    dependencies: []
+    trigger: "probabilistic"
+    probability: 0.5
+  arbitrage:
+    handler: "scheduler_bridge:arbitrage_check"
+    dependencies: ["price_feed"]
+    trigger: "on_event"
+    event: "new_block"
+    condition: "gas_price < 20"
+  price_feed:
+    handler: "scheduler_bridge:arbitrage_check"
+    dependencies: []
+    trigger: "probabilistic"
+    probability: 0.9
+
+schedules:
+  - skill: spectrum_scan
+    priority: high
+    cooldown: 900  # seconds
+  - skill: arbitrage
+    max_runs_per_hour: 10
