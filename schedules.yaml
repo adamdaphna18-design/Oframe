@@ -1,0 +1,23 @@
+skills:
+  spectrum_scan:
+    handler: "scheduler_bridge:spectrum_scan"
+    dependencies: []
+    trigger: "probabilistic"
+    probability: 0.5
+  arbitrage_check:
+    handler: "scheduler_bridge:arbitrage_check"
+    dependencies: []
+    trigger: "interval"
+    condition: "market_volatility > 0.5"
+  threat_update:
+    handler: "scheduler_bridge:threat_update"
+    dependencies: []
+    trigger: "on_event"
+    event: "new_threat_reported"
+
+schedules:
+  - skill: spectrum_scan
+    priority: medium
+    cooldown: 300
+  - skill: arbitrage_check
+    max_runs_per_hour: 10
