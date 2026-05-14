@@ -1,0 +1,4 @@
+ddgs
+flask
+requests
+jinja2
