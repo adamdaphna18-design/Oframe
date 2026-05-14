@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from oframe.core import ask_ollama
+
+if len(sys.argv) > 1 and sys.argv[1] == "ask":
+    answer = ask_ollama(" ".join(sys.argv[2:]))
+    print(answer)
+else:
+    print("Usage: bin/o ask <prompt>")
