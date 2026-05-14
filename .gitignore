@@ -1,0 +1,4 @@
+agent_economy.db
+*.log
+__pycache__/
+*.pyc
