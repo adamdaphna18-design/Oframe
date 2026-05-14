@@ -1,1 +1,5 @@
 .env
+__pycache__/
+*.pyc
+*.log
+agent_economy.db
