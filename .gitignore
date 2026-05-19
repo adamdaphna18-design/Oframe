@@ -10,3 +10,12 @@ agent_economy.db
 # Python compiled files
 __pycache__/
 *.pyc
+
+# Environment variables
+.env.*
+!.env.example
+
+# Private keys / Certificates
+*.pem
+*.key
+*.cert
