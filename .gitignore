@@ -1,4 +1,11 @@
 .env
+.env.*
+!.env.example
+
+# Keys and Certificates
+*.pem
+*.key
+*.cert
 
 # Logs
 *.log
