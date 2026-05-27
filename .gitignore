@@ -1,4 +1,12 @@
+# Environments
 .env
+.env.*
+!.env.example
+
+# Private keys/certificates
+*.pem
+*.key
+*.cert
 
 # Logs
 *.log
