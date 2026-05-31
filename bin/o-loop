@@ -1,4 +1,12 @@
 from dotenv import load_dotenv
+import os
+
 load_dotenv()
+
+# Security: Validate required core environment variables to fail securely if misconfigured.
+REQUIRED_ENV_VARS = ["AGENT_ID", "OLLAMA_HOST", "OLLAMA_MODEL"]
+for var in REQUIRED_ENV_VARS:
+    if not os.getenv(var):
+        raise ValueError(f"Missing required environment variable: {var}")
 
 # Existing bin/o-loop content
