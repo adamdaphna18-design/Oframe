@@ -10,3 +10,4 @@ agent_economy.db
 # Python compiled files
 __pycache__/
 *.pyc
+venv/
