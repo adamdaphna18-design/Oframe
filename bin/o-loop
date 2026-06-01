@@ -1,4 +1,13 @@
+import os
 from dotenv import load_dotenv
+
 load_dotenv()
+
+# SECURITY: Fail securely by validating required environment variables upon loading
+required_vars = ["AGENT_ID", "OLLAMA_HOST", "OLLAMA_MODEL"]
+missing_vars = [var for var in required_vars if not os.getenv(var)]
+if missing_vars:
+    # Raising explicit exception per security conventions
+    raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
 
 # Existing bin/o-loop content
